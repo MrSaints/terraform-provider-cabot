@@ -80,6 +80,7 @@ func getServiceFromResourceData(d *schema.ResourceData) *cabot.Service {
 		serviceRequest.Instances = append(serviceRequest.Instances, instance.(int))
 	}
 
+	// TODO: sort
 	statusChecks := d.Get("status_checks").([]interface{})
 	for _, check := range statusChecks {
 		serviceRequest.StatusChecks = append(serviceRequest.StatusChecks, check.(int))
