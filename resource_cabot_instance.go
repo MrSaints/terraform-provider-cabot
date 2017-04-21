@@ -12,6 +12,9 @@ func resourceCabotInstance() *schema.Resource {
 		Read:   resourceCabotInstanceRead,
 		Update: resourceCabotInstanceUpdate,
 		Delete: resourceCabotInstanceDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"address": &schema.Schema{

@@ -37,6 +37,9 @@ func resourceCabotCheckGraphite() *schema.Resource {
 		Read:   resourceCabotCheckGraphiteRead,
 		Update: resourceCabotCheckGraphiteUpdate,
 		Delete: resourceCabotCheckGraphiteDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: CombineWithBaseCheckSchema(s),
 	}

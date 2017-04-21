@@ -46,6 +46,9 @@ func resourceCabotCheckHTTP() *schema.Resource {
 		Read:   resourceCabotCheckHTTPRead,
 		Update: resourceCabotCheckHTTPUpdate,
 		Delete: resourceCabotCheckHTTPDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: CombineWithBaseCheckSchema(s),
 	}

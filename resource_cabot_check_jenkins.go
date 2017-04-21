@@ -19,6 +19,9 @@ func resourceCabotCheckJenkins() *schema.Resource {
 		Read:   resourceCabotCheckJenkinsRead,
 		Update: resourceCabotCheckJenkinsUpdate,
 		Delete: resourceCabotCheckJenkinsDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: CombineWithBaseCheckSchema(s),
 	}

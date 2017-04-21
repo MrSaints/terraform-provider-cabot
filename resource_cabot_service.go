@@ -12,6 +12,9 @@ func resourceCabotService() *schema.Resource {
 		Read:   resourceCabotServiceRead,
 		Update: resourceCabotServiceUpdate,
 		Delete: resourceCabotServiceDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"alerts": &schema.Schema{
