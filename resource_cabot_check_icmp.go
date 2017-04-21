@@ -12,6 +12,9 @@ func resourceCabotCheckICMP() *schema.Resource {
 		Read:   resourceCabotCheckICMPRead,
 		Update: resourceCabotCheckICMPUpdate,
 		Delete: resourceCabotCheckICMPDelete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: baseCheckSchema,
 	}
