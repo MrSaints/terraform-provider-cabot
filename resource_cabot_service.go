@@ -18,7 +18,7 @@ func resourceCabotService() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"alerts": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
@@ -30,7 +30,7 @@ func resourceCabotService() *schema.Resource {
 				Default:  true,
 			},
 			"instances": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
@@ -45,7 +45,7 @@ func resourceCabotService() *schema.Resource {
 				Computed: true,
 			},
 			"status_checks": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
@@ -56,7 +56,7 @@ func resourceCabotService() *schema.Resource {
 				Optional: true,
 			},
 			"users_to_notify": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
