@@ -73,23 +73,23 @@ func getServiceFromResourceData(d *schema.ResourceData) *cabot.Service {
 		URL:           d.Get("url").(string),
 	}
 
-	alerts := d.Get("alerts").([]interface{})
+	alerts := d.Get("alerts").(*schema.Set).List()
 	for _, alert := range alerts {
 		serviceRequest.Alerts = append(serviceRequest.Alerts, alert.(int))
 	}
 
-	instances := d.Get("instances").([]interface{})
+	instances := d.Get("instances").(*schema.Set).List()
 	for _, instance := range instances {
 		serviceRequest.Instances = append(serviceRequest.Instances, instance.(int))
 	}
 
 	// TODO: sort
-	statusChecks := d.Get("status_checks").([]interface{})
+	statusChecks := d.Get("status_checks").(*schema.Set).List()
 	for _, check := range statusChecks {
 		serviceRequest.StatusChecks = append(serviceRequest.StatusChecks, check.(int))
 	}
 
-	usersToNotify := d.Get("users_to_notify").([]interface{})
+	usersToNotify := d.Get("users_to_notify").(*schema.Set).List()
 	for _, user := range usersToNotify {
 		serviceRequest.UsersToNotify = append(serviceRequest.UsersToNotify, user.(int))
 	}

@@ -66,17 +66,17 @@ func getInstanceFromResourceData(d *schema.ResourceData) *cabot.Instance {
 		Name:          d.Get("name").(string),
 	}
 
-	alerts := d.Get("alerts").([]interface{})
+	alerts := d.Get("alerts").(*schema.Set).List()
 	for _, alert := range alerts {
 		instanceRequest.Alerts = append(instanceRequest.Alerts, alert.(int))
 	}
 
-	statusChecks := d.Get("status_checks").([]interface{})
+	statusChecks := d.Get("status_checks").(*schema.Set).List()
 	for _, check := range statusChecks {
 		instanceRequest.StatusChecks = append(instanceRequest.StatusChecks, check.(int))
 	}
 
-	usersToNotify := d.Get("users_to_notify").([]interface{})
+	usersToNotify := d.Get("users_to_notify").(*schema.Set).List()
 	for _, user := range usersToNotify {
 		instanceRequest.UsersToNotify = append(instanceRequest.UsersToNotify, user.(int))
 	}
