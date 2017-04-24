@@ -27,6 +27,7 @@ func resourceCabotInstance() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 			"alerts_enabled": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -47,6 +48,7 @@ func resourceCabotInstance() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 			"users_to_notify": &schema.Schema{
 				Type:     schema.TypeSet,
@@ -54,6 +56,7 @@ func resourceCabotInstance() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 		},
 	}

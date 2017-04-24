@@ -23,6 +23,7 @@ func resourceCabotService() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 			"alerts_enabled": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -35,6 +36,7 @@ func resourceCabotService() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
@@ -50,6 +52,7 @@ func resourceCabotService() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 			"url": &schema.Schema{
 				Type:     schema.TypeString,
@@ -61,6 +64,7 @@ func resourceCabotService() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
+				Set: HashInt,
 			},
 		},
 	}
@@ -83,7 +87,6 @@ func getServiceFromResourceData(d *schema.ResourceData) *cabot.Service {
 		serviceRequest.Instances = append(serviceRequest.Instances, instance.(int))
 	}
 
-	// TODO: sort
 	statusChecks := d.Get("status_checks").(*schema.Set).List()
 	for _, check := range statusChecks {
 		serviceRequest.StatusChecks = append(serviceRequest.StatusChecks, check.(int))
