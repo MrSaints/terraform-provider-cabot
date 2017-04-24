@@ -22,7 +22,7 @@ func resourceCabotInstance() *schema.Resource {
 				Optional: true,
 			},
 			"alerts": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
@@ -42,14 +42,14 @@ func resourceCabotInstance() *schema.Resource {
 				Computed: true,
 			},
 			"status_checks": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
 			},
 			"users_to_notify": &schema.Schema{
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
