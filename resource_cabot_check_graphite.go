@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mrsaints/go-cabot/cabot"
 	"strconv"
+	"time"
 )
 
 func resourceCabotCheckGraphite() *schema.Resource {
@@ -73,19 +75,24 @@ func resourceCabotCheckGraphiteRead(d *schema.ResourceData, meta interface{}) er
 	client := meta.(*cabot.Client)
 
 	id, _ := strconv.Atoi(d.Id())
-	check, err := client.GraphiteChecks.Get(id)
-	if err != nil {
-		return err
-	}
 
-	d.SetId(strconv.Itoa(check.ID))
-	setResourceDataForStatusCheck(d, check.StatusCheck)
-	d.Set("metric", check.Metric)
-	d.Set("check_type", check.CheckType)
-	d.Set("value", check.Value)
-	d.Set("expected_num_hosts", check.ExpectedNumHosts)
-	d.Set("allowed_num_failures", check.AllowedNumFailures)
-	return nil
+	return resource.Retry(DEFAULT_RETRY_TIMEOUT, func() *resource.RetryError {
+		check, err := client.GraphiteChecks.Get(id)
+		if err != nil {
+			time.Sleep(DEFAULT_GRACE_PERIOD)
+			return resource.RetryableError(err)
+		}
+
+		d.SetId(strconv.Itoa(check.ID))
+		setResourceDataForStatusCheck(d, check.StatusCheck)
+		d.Set("metric", check.Metric)
+		d.Set("check_type", check.CheckType)
+		d.Set("value", check.Value)
+		d.Set("expected_num_hosts", check.ExpectedNumHosts)
+		d.Set("allowed_num_failures", check.AllowedNumFailures)
+
+		return nil
+	})
 }
 
 func resourceCabotCheckGraphiteUpdate(d *schema.ResourceData, meta interface{}) error {

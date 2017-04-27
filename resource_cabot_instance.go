@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mrsaints/go-cabot/cabot"
 	"strconv"
+	"time"
 )
 
 func resourceCabotInstance() *schema.Resource {
@@ -103,20 +105,24 @@ func resourceCabotInstanceRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*cabot.Client)
 
 	id, _ := strconv.Atoi(d.Id())
-	instance, err := client.Instances.Get(id)
-	if err != nil {
-		return err
-	}
 
-	d.SetId(strconv.Itoa(instance.ID))
-	d.Set("address", instance.Address)
-	d.Set("alerts", instance.Alerts)
-	d.Set("alerts_enabled", instance.AlertsEnabled)
-	d.Set("name", instance.Name)
-	d.Set("overall_status", instance.OverallStatus)
-	d.Set("status_checks", instance.StatusChecks)
-	d.Set("users_to_notify", instance.UsersToNotify)
-	return nil
+	return resource.Retry(DEFAULT_RETRY_TIMEOUT, func() *resource.RetryError {
+		instance, err := client.Instances.Get(id)
+		if err != nil {
+			time.Sleep(DEFAULT_GRACE_PERIOD)
+			return resource.RetryableError(err)
+		}
+
+		d.SetId(strconv.Itoa(instance.ID))
+		d.Set("address", instance.Address)
+		d.Set("alerts", instance.Alerts)
+		d.Set("alerts_enabled", instance.AlertsEnabled)
+		d.Set("name", instance.Name)
+		d.Set("overall_status", instance.OverallStatus)
+		d.Set("status_checks", instance.StatusChecks)
+		d.Set("users_to_notify", instance.UsersToNotify)
+		return nil
+	})
 }
 
 func resourceCabotInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
