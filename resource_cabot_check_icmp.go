@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mrsaints/go-cabot/cabot"
 	"strconv"
+	"time"
 )
 
 func resourceCabotCheckICMP() *schema.Resource {
@@ -42,14 +44,19 @@ func resourceCabotCheckICMPRead(d *schema.ResourceData, meta interface{}) error 
 	client := meta.(*cabot.Client)
 
 	id, _ := strconv.Atoi(d.Id())
-	check, err := client.ICMPChecks.Get(id)
-	if err != nil {
-		return err
-	}
 
-	d.SetId(strconv.Itoa(check.ID))
-	setResourceDataForStatusCheck(d, check.StatusCheck)
-	return nil
+	return resource.Retry(DEFAULT_RETRY_TIMEOUT, func() *resource.RetryError {
+		check, err := client.ICMPChecks.Get(id)
+		if err != nil {
+			time.Sleep(DEFAULT_GRACE_PERIOD)
+			return resource.RetryableError(err)
+		}
+
+		d.SetId(strconv.Itoa(check.ID))
+		setResourceDataForStatusCheck(d, check.StatusCheck)
+
+		return nil
+	})
 }
 
 func resourceCabotCheckICMPUpdate(d *schema.ResourceData, meta interface{}) error {

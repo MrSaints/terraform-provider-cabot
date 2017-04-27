@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mrsaints/go-cabot/cabot"
 	"strconv"
+	"time"
 )
 
 func resourceCabotCheckHTTP() *schema.Resource {
@@ -84,21 +86,26 @@ func resourceCabotCheckHTTPRead(d *schema.ResourceData, meta interface{}) error 
 	client := meta.(*cabot.Client)
 
 	id, _ := strconv.Atoi(d.Id())
-	check, err := client.HTTPChecks.Get(id)
-	if err != nil {
-		return err
-	}
 
-	d.SetId(strconv.Itoa(check.ID))
-	setResourceDataForStatusCheck(d, check.StatusCheck)
-	d.Set("endpoint", check.Endpoint)
-	d.Set("username", check.Username)
-	d.Set("password", check.Password)
-	d.Set("text_match", check.TextMatch)
-	d.Set("status_code", check.StatusCode)
-	d.Set("timeout", check.Timeout)
-	d.Set("verify_ssl", check.VerifySSL)
-	return nil
+	return resource.Retry(DEFAULT_RETRY_TIMEOUT, func() *resource.RetryError {
+		check, err := client.HTTPChecks.Get(id)
+		if err != nil {
+			time.Sleep(DEFAULT_GRACE_PERIOD)
+			return resource.RetryableError(err)
+		}
+
+		d.SetId(strconv.Itoa(check.ID))
+		setResourceDataForStatusCheck(d, check.StatusCheck)
+		d.Set("endpoint", check.Endpoint)
+		d.Set("username", check.Username)
+		d.Set("password", check.Password)
+		d.Set("text_match", check.TextMatch)
+		d.Set("status_code", check.StatusCode)
+		d.Set("timeout", check.Timeout)
+		d.Set("verify_ssl", check.VerifySSL)
+
+		return nil
+	})
 }
 
 func resourceCabotCheckHTTPUpdate(d *schema.ResourceData, meta interface{}) error {

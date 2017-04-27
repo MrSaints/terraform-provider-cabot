@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mrsaints/go-cabot/cabot"
 	"strconv"
+	"time"
 )
 
 func resourceCabotCheckJenkins() *schema.Resource {
@@ -51,15 +53,20 @@ func resourceCabotCheckJenkinsRead(d *schema.ResourceData, meta interface{}) err
 	client := meta.(*cabot.Client)
 
 	id, _ := strconv.Atoi(d.Id())
-	check, err := client.JenkinsChecks.Get(id)
-	if err != nil {
-		return err
-	}
 
-	d.SetId(strconv.Itoa(check.ID))
-	setResourceDataForStatusCheck(d, check.StatusCheck)
-	d.Set("max_queued_build_time", check.MaxQueuedBuildTime)
-	return nil
+	return resource.Retry(DEFAULT_RETRY_TIMEOUT, func() *resource.RetryError {
+		check, err := client.JenkinsChecks.Get(id)
+		if err != nil {
+			time.Sleep(DEFAULT_GRACE_PERIOD)
+			return resource.RetryableError(err)
+		}
+
+		d.SetId(strconv.Itoa(check.ID))
+		setResourceDataForStatusCheck(d, check.StatusCheck)
+		d.Set("max_queued_build_time", check.MaxQueuedBuildTime)
+
+		return nil
+	})
 }
 
 func resourceCabotCheckJenkinsUpdate(d *schema.ResourceData, meta interface{}) error {
