@@ -14,6 +14,10 @@ func resourceCabotCheckJenkins() *schema.Resource {
 			Type:     schema.TypeInt,
 			Optional: true,
 		},
+		"jenkins_config": &schema.Schema{
+			Type:     schema.TypeInt,
+			Required: true,
+		},
 	}
 
 	return &schema.Resource{
@@ -32,6 +36,7 @@ func resourceCabotCheckJenkins() *schema.Resource {
 func getJenkinsCheckFromResourceData(d *schema.ResourceData) *cabot.JenkinsCheck {
 	checkRequest := &cabot.JenkinsCheck{
 		MaxQueuedBuildTime: d.Get("max_queued_build_time").(int),
+		JenkinsConfig:      d.Get("jenkins_config").(int),
 	}
 	checkRequest.StatusCheck = getStatusCheckFromResourceData(d)
 	return checkRequest
